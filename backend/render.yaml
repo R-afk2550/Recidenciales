@@ -1,0 +1,33 @@
+services:
+  # Web Service
+  - type: web
+    name: recidenciales-backend
+    env: python
+    region: oregon
+    plan: free
+    branch: main
+    buildCommand: "./build.sh"
+    startCommand: "gunicorn config.wsgi:application"
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.0
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: False
+      - key: DATABASE_URL
+        fromDatabase:
+          name: recidenciales-db
+          property: connectionString
+      - key: ALLOWED_HOSTS
+        sync: false
+      - key: CORS_ALLOWED_ORIGINS
+        sync: false
+
+  # PostgreSQL Database
+  - type: pgsql
+    name: recidenciales-db
+    region: oregon
+    plan: free
+    databaseName: recidenciales
+    user: recidenciales
